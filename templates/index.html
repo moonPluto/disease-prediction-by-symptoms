@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Disease Prediction System</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+}
+
+body{
+    margin:0;
+    min-height:100vh;
+    background: linear-gradient(135deg,#667eea,#764ba2);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:#333;
+}
+
+
+.container{
+    width:95%;
+    max-width:900px;
+    background:rgba(255,255,255,0.95);
+    border-radius:20px;
+    padding:30px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.25);
+    animation:fadeIn 1s ease;
+}
+
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(30px);}
+    to{opacity:1; transform:translateY(0);}
+}
+
+.header{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.header h1{
+    color:#6a11cb;
+    margin-bottom:5px;
+}
+
+.header p{
+    color:#666;
+}
+
+/* Input */
+.input-box{
+    position:relative;
+}
+
+input{
+    width:100%;
+    padding:15px;
+    border-radius:12px;
+    border:2px solid #ddd;
+    font-size:16px;
+    outline:none;
+}
+
+input:focus{
+    border-color:#6a11cb;
+}
+
+
+.suggestions{
+    position:absolute;
+    width:100%;
+    background:#fff;
+    border-radius:10px;
+    margin-top:5px;
+    max-height:180px;
+    overflow-y:auto;
+    box-shadow:0 10px 20px rgba(0,0,0,0.15);
+    z-index:10;
+}
+
+.suggestions div{
+    padding:10px;
+    cursor:pointer;
+}
+
+.suggestions div:hover{
+    background:#f1f1f1;
+}
+
+
+button{
+    margin-top:20px;
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    font-size:18px;
+    font-weight:600;
+    background:linear-gradient(135deg,#6a11cb,#2575fc);
+    color:white;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    transform:scale(1.02);
+    box-shadow:0 10px 20px rgba(0,0,0,0.2);
+}
+
+
+.result{
+    margin-top:30px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+}
+
+.card{
+    background:#f8f9ff;
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 8px 15px rgba(0,0,0,0.1);
+}
+
+.card h3{
+    margin-top:0;
+    color:#6a11cb;
+    border-bottom:2px solid #ddd;
+    padding-bottom:5px;
+}
+
+.card p{
+    font-size:14px;
+    line-height:1.6;
+    white-space:pre-line;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>🩺 Disease Prediction System</h1>
+        <p>Enter your symptoms separated by commas</p>
+    </div>
+
+    <div class="input-box">
+        <input id="itp" type="text" placeholder="e.g. fever, headache, nausea">
+        <div class="suggestions" id="suggestions"></div>
+    </div>
+
+    <button onclick="berun()">Analyze Symptoms</button>
+
+    <div id="ff" class="result"></div>
+
+</div>
+
+<script>
+function berun(){
+    let text = document.getElementById("itp").value;
+    fetch("/process",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({text:text})
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        document.getElementById("ff").innerHTML = `
+        <div class="card">
+            <h3>Top Diseases</h3>
+            <p>${data.dis}</p>
+        </div>
+
+        <div class="card">
+            <h3>Description</h3>
+            <p>${data.desc}</p>
+        </div>
+
+        <div class="card">
+            <h3>Medicines</h3>
+            <p>${data.med.join(", ")}</p>
+        </div>
+
+        <div class="card">
+            <h3>Diet</h3>
+            <p>${data.diet.join(", ")}</p>
+        </div>
+
+        <div class="card">
+            <h3>Workout</h3>
+            <p>${data.work.join(", ")}</p>
+        </div>
+        `;
+    });
+}
+
+
+const data = ['mucoid sputum', 'blackheads', 'mood swings', 'movement stiffness', 'bladder discomfort', 'swelling joints', 'yellow urine', 'increased appetite', 'loss of balance', 'indigestion', 'weight loss', 'weakness in limbs', 'scurring', 'spinning movements', 'swollen blood vessels', 'continuous feel of urine', 'chest pain', 'visual disturbances', 'red sore around nose', 'small dents in nails', 'blood in sputum', 'stiff neck', 'belly pain', 'malaise', 'painful walking', 'rusty sputum', 'swollen extremeties', 'congestion', 'ulcers on tongue', 'red spots over body', 'passage of gases', 'neck pain', 'dark urine', 'sinus pressure', 'lack of concentration', 'stomach bleeding', 'back pain', 'knee pain', 'foul smell of urine', 'pain during bowel movements', 'high fever', 'slurred speech', 'irregular sugar level', 'phlegm', 'cough', 'stomach pain', 'obesity', 'watering from eyes', 'prominent veins on calf', 'patches in throat', 'yellowing of eyes', 'abnormal menstruation', 'cold hands and feets', 'internal itching', 'pus filled pimples', 'abdominal pain', 'swelled lymph nodes', 'spotting  urination', 'history of alcohol consumption', 'puffy face and eyes', 'pain behind the eyes', 'palpitations', 'sunken eyes', 'drying and tingling lips', 'runny nose', 'blurred and distorted vision', 'nodal skin eruptions', 'extra marital contacts', 'polyuria', 'muscle weakness', 'continuous sneezing', 'distention of abdomen', 'lethargy', 'mild fever', 'muscle wasting', 'redness of eyes', 'muscle pain', 'weight gain', 'bloody stool', 'silver like dusting', 'irritation in anus', 'dischromic  patches', 'restlessness', 'acute liver failure', 'cramps', 'inflammatory nails', 'loss of appetite', 'receiving unsterile injections', 'excessive hunger', 'fast heart rate', 'blister', 'swollen legs', 'hip joint pain', 'yellowish skin', 'altered sensorium', 'breathlessness', 'chills', 'enlarged thyroid', 'acidity', 'brittle nails', 'skin rash', 'pain in anal region', 'receiving blood transfusion', 'skin peeling', 'family history', 'unsteadiness', 'yellow crust ooze', 'weakness of one body side', 'loss of smell', 'sweating', 'joint pain', 'fluid overload', 'toxic look (typhos)', 'burning micturition', 'swelling of stomach', 'throat irritation', 'abdominal cramp', 'abdominal distention', 'abnormal behavior', 'abnormal bleeding', 'abnormal sensation', 'abnormally frequent', 'abscess', 'aching', 'acne', 'acquiring drinking alcohol taking lot time', 'affected part turning white', 'anemia', 'arm', 'attack pain', 'back', 'bacterial infection', 'bad breath', 'bad smelling thin vaginal discharge', 'bad smelling vaginal discharge', 'barky cough', 'belching', 'better sitting worse lying', 'birth baby younger week gestational age', 'bleeding gum', 'bleeding skin', 'blindness', 'blindness one eye', 'blister sunlight', 'bloating', 'blood stool', 'blood urine', 'bloody diarrhea', 'blue', 'bluish skin coloration', 'blurred vision', 'blurry vision', 'body tremor', 'bone pain', 'bowed leg', 'breakdown skeletal muscle', 'breathing problem', 'burning', 'burning redness eye', 'burning stabbing pain', 'burning urination', 'certain thought repeatedly', 'change bowel movement', 'change breast shape', 'change color', 'change hair', 'change reflex', 'change skin color red black', 'change sleeping eating pattern', 'change taste', 'change voice', 'characteristic facial feature', 'characteristic rash', 'chest discomfort', 'chest pain.1', 'chest tightness', 'chill', 'chronic cough', 'chronic pain bladder', 'clenched fist overlapping finger', 'close object appear blurry', 'clumsy', 'cm lump skin', 'cold sweat', 'confused thinking', 'confusion', 'coolness', 'coordination', 'cough bloody mucus', 'cough sputum production', 'coughing', 'coughing blood', 'coughing including coughing blood', 'coughing mucus', 'crawl', 'cry episode', 'dark urine.1', 'darker', 'daytime sleepiness', 'death child le one year age', 'decreased ability feel pain', 'decreased ability see', 'decreased ability think', 'decreased ability think remember', 'decreased ability turn', 'decreased appetite', 'decreased motivation', 'decreased range motion', 'decreased taste', 'decreased vision', 'delayed physical growth', 'delirium', 'delusion', 'dementia', 'depending subtype abdominal pain', 'depends organ involved', 'depressed mood', 'dermatitis herpetiformis', 'developmental disability', 'diarrhea', 'diarrhea may bloody', 'diarrhea mixed blood', 'difficulty breathing', 'difficulty cutting', 'difficulty eating', 'difficulty getting pregnant', 'difficulty remembering recent event', 'difficulty swallowing', 'difficulty walking', 'dimpling skin', 'discharge penis', 'disorientation', 'distant object appear blurry', 'distorted blurred vision distance', 'double vision', 'drinking large amount alcohol long period', 'drooping eyelid', 'dry cough', 'dry damp skin', 'dry eye', 'dry mouth', 'ear pain', 'easy prolonged bleeding', 'emotional problem', 'enlarged lymph node neck', 'enlarged spleen', 'enlarged thyroid.1', 'enlargement thyroid', 'enlargement tonsil', 'episode severe', 'erythema marginatum', 'excess hair', 'excessive amount uterine bleeding', 'excessive daytime sleepiness', 'excessive salivation', 'expanding area redness site tick bite', 'extreme sadness', 'extremity weakness', 'eye pain', 'eye strain', 'eyestrain', 'fast heart rate.1', 'fast heartbeat', 'fear water', 'feel need check thing repeatedly', 'feeling cold', 'feeling faint upon standing', 'feeling generally unwell', 'feeling like passing', 'feeling need urinate right away', 'feeling tired', 'feeling tired time', 'fever', 'firm', 'flat discolored spot bump may blister', 'flu like illness', 'flu like symptom', 'fluid filled blister scab', 'fluid nipple', 'frequent infection', 'frequent urination', 'fullness', 'gas', 'gradual loss coordination', 'growth delay', 'gum disease', 'hair loss', 'half ring finger', 'hallucination', 'hallucination usually hearing voice', 'hard swelling skin', 'hard time reading small print', 'hearing loss', 'hearing sound external sound present', 'heartburn', 'heat intolerance', 'heavy period', 'high blood pressure', 'high body temperature', 'hoarse voice', 'hold reading material farther away', 'impaired communication', 'inability child', 'inability move facial muscle one side', 'inability move feel one side body', 'increased breath rate', 'increased breathing rate', 'increased fat', 'increased heart rate', 'increased hunger', 'increased risk broken bone', 'increased risk infection', 'increased thirst', 'increasing weakening', 'index', 'infertility', 'inflamed eye', 'insomnia', 'intellectual disability', 'involuntary muscle movement', 'involuntary sleep episode', 'irregular edge', 'irregular menstrual period', 'irregular menstruation', 'irritation', 'itchiness', 'itching genital area', 'itching result trouble sleeping', 'itchy', 'itchy blister', 'itchy bump', 'itchy ear', 'jaundice', 'jaw', 'jerky body movement', 'joint bone pain', 'joint swelling', 'large amount watery diarrhea', 'large forehead', 'large lymph node', 'large lymph node around neck', 'leg swelling', 'light sensitivity', 'little pain', 'localized breast pain redness', 'long term fatigue', 'loose frequent bowel movement', 'loose teeth', 'loss appetite', 'loss consciousness may sweating', 'loss hair part head body', 'loss lot blood childbirth', 'loss smell', 'loss vision one side', 'low blood pressure', 'low energy', 'low red blood cell', 'lower abdominal pain', 'lump breast', 'lump bump neck', 'maculopapular rash', 'malabsorption', 'may symptom', 'memory problem', 'mental ability', 'mental change', 'mid dilated pupil', 'middle finger', 'mild moderate intellectual disability', 'minimal', 'missed period', 'mole increasing size', 'mood change', 'mood swing', 'mouth sore', 'mouth ulcer', 'multiple painful joint', 'muscle ache difficulty breathing', 'muscle cramp', 'muscle joint pain', 'muscle spasm', 'muscle weakness.1', 'muscle weakness beginning foot hand', 'muscle weakness resulting inability move', 'muscular pain', 'myalgia', 'nausea vomiting', 'nausea vomiting weight loss dehydration occur', 'nearly undetectable spell', 'nearsightedness', 'neck', 'neck stiffness', 'needing urinate often', 'newly inverted nipple', 'non itchy skin ulcer', 'non painful cyst middle eyelid', 'nonaligned eye', 'none non specific', 'numbness', 'object different size eye', 'one eye myopia eye hyperopia', 'opening upper lip may extend nose palate', 'others', 'overlying redness', 'pain along inside edge shinbone', 'pain area', 'pain around ear', 'pain doesnt go shingle', 'pain going leg lower back', 'pain sex', 'pain specific bone', 'painful', 'painful blister lower leg', 'painful heavy period', 'painful joint base big toe', 'painful rash occurring stripe', 'painful skin', 'painful swelling parotid gland', 'painful swollen joint', 'painful tender outer part elbow', 'painless', 'painless lump', 'pale color', 'pale skin', 'pallor', 'paralysis', 'patch thick', 'patch white skin', 'perform certain routine repeatedly', 'period vigorous shaking', 'persistent rough white red patch mouth lasting longer week', 'photophobia', 'physical disability', 'pimple like rash', 'pinkish', 'playing video game extremely long period time', 'poor ability tolerate cold', 'poor appetite', 'poor coordination', 'poor tolerance heat', 'post nasal drip', 'problem language', 'problem mood', 'problem understanding speaking', 'problem vision', 'profuse sweating', 'progressive muscle weakness', 'prolonged', 'prolonged cough', 'prominent', 'protein urine', 'psychosis', 'pulsing pain', 'purple colored skin affected area', 'purple colored skin lesion', 'raised', 'raised red blue lesion', 'random outburst laughter', 'rapid breathing', 'recurring episode wheezing', 'red', 'red eye', 'red purple darker skin', 'red rash', 'red scaly patch skin breast', 'red skin', 'red spot white eye', 'red without blister', 'reddish eye', 'redness', 'redness eye', 'repetitive behavior', 'restricted interest', 'right lower abdominal pain', 'rigidity', 'ringing ear heartbeat', 'rough skin growth', 'runny nose.1', 'scaly patch skin', 'scratchiness', 'seizure', 'sensitivity smell', 'sensitivity sound', 'severe intellectual disability', 'severe pain', 'severe pain lower back abdomen', 'shakiness', 'shaking', 'sharp chest pain', 'shock like pain one side face last second minute', 'short height', 'short stature', 'shortness breath', 'sit', 'skin blister', 'skin breakdown', 'skin lesion generally pink color project outward', 'skin peeling.1', 'sleep problem', 'sleeping problem', 'slowness movement', 'small', 'small blister break open form painful ulcer', 'small blister surrounding swelling', 'small face', 'small head', 'small jaw', 'sneezing', 'social withdrawal', 'sometimes symptom', 'sore arm leg', 'sore throat', 'sore wrist', 'stiff muscle', 'stiff neck.1', 'stiffness', 'stomach pain.1', 'stroke', 'stuffy itchy nose', 'stunted growth', 'sudden', 'sudden loss muscle strength', 'sweat', 'swell pain near tumor', 'swelling', 'swelling abdomen', 'swelling around eye', 'swelling hand foot', 'swollen', 'swollen hand foot', 'swollen lymph node', 'taste acid', 'temporary fleeting vision one eye', 'tender breast', 'testicular pain', 'tingling', 'tingling hand foot', 'tingling thumb', 'tiredness', 'tooth loss', 'tremor', 'triangular tissue growth cornea', 'trouble breathing nose', 'trouble coordination', 'trouble opening mouth', 'trouble seeing', 'trouble sensation', 'trouble sleeping', 'trouble social interaction', 'trouble speaking', 'trouble swallowing', 'trouble talking', 'trouble walking', 'typically none', 'ulcer', 'ulcer around genitals', 'ulceration', 'unable move', 'unexplained weight loss', 'unintended weight loss', 'unpleasant smell present breath', 'upper abdominal pain', 'usage resulting problem', 'vaginal bleeding', 'vaginal bleeding without pain', 'vaginal discharge', 'variable', 'vary depending part brain involved', 'varying degree muscle weakness', 'velvety skin', 'vision loss', 'warm', 'wart', 'watery eye', 'weak grip', 'weak muscle', 'weakness limb', 'weakness numbness affected leg', 'webbed neck', 'weight gain.1', 'wet', 'wheezing', 'white patch vaginal discharge', 'widespread pain', 'withdrawal occurring stopping', 'worrying', 'yellow skin', 'yellowish coloration skin white eye', 'yellowish skin.1', 'yellowish skin crust', 'fatigue', 'bruising', 'constipation', 'shivering', 'depression', 'itching', 'dehydration', 'coma', 'nausea', 'irritability', 'dizziness', 'headache', 'vomiting', 'diarrhoea', 'anxiety'];
+
+const searchBox=document.getElementById("itp");
+const suggestionsBox=document.getElementById("suggestions");
+
+searchBox.addEventListener("input",function(){
+    const input=this.value.toLowerCase();
+    const parts=input.split(",");
+    const lastWord=parts[parts.length-1].trim();
+    suggestionsBox.innerHTML="";
+    if(!lastWord)return;
+
+    data.filter(i=>i.toLowerCase().startsWith(lastWord)).slice(0,10).forEach(item=>{
+        const div=document.createElement("div");
+        div.textContent=item;
+        div.onclick=()=>{
+            parts[parts.length-1]=" "+item;
+            searchBox.value=parts.join(",")+", ";
+            suggestionsBox.innerHTML="";
+        }
+        suggestionsBox.appendChild(div);
+    });
+});
+
+document.addEventListener("click",e=>{
+    if(e.target!==searchBox) suggestionsBox.innerHTML="";
+});
+</script>
+
+</body>
+</html>
