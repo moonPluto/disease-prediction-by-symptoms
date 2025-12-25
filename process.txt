@@ -1,0 +1,11 @@
+open terminal,
+cd cwh (go to folder)
+python main.py (run file)
+open browser -> go to http://127.0.0.1:5000
+if not work then to stop, in terminal press ctl+c
+
+
+requrements:
+liberys -> flask,sk-learn,pandas,pickel
+hearware -> 4gb+ ram for smooth processing
+software -> any browser,code editor(if have)
